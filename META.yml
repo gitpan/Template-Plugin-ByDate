@@ -1,0 +1,9 @@
+--- #YAML:1.0
+name: Template-Plugin-ByDate
+version: 0.01
+author:
+  - Darin McBride <dmcbride@cpan.org>
+abstract: Keeps/removes included text based on whether the
+    current date is within range.
+license: perl
+generated_by: Module::Build version 0.261, without YAML.pm
