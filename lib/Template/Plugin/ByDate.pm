@@ -14,7 +14,7 @@ Version 0.01
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
@@ -62,16 +62,16 @@ while
     This only shows up outside the date range
     [% END %]
 
+The starting and until dates are actually parsed by L<Date::Parse>.  If you
+do not specify a time, the starting time is 00:00:00, while the until time is
+23:59:59.  This is done by checking the until stamp for a colon - if there is
+no colon, we add " 23:59:59" to the string before passing it into Date::Parse.
+If that doesn't work for you, please let me know what string you're using.
 
 =cut
 
 use Date::Parse;
-
-sub _any(&@) {
-    my $code = shift;
-    $code->() && return 1 for @_;
-    0
-}
+use List::MoreUtils qw/any/;
 
 sub filter
 {
@@ -80,11 +80,16 @@ sub filter
     $args = $self->merge_args($args);
     $conf = $self->merge_config($conf);
 
-    my $not = _any { lc eq 'not'} @$args;
+    my $not = (any { lc eq 'not' } @$args) ? 1 : 0;
+    my $until_str = $conf->{'until'};
+    if (defined $until_str and $until_str !~ /:/)
+    {
+        $until_str .= ' 23:59:59';
+    }
 
-    my $starting = exists $conf->{starting} ? str2time($conf->{starting}) : 0;
-    my $until    = exists $conf->{'until'} ?  str2time($conf->{'until'})  : undef;
-    my $now      = exists $conf->{now} ?      str2time($conf->{now})      : time;
+    my $starting = exists  $conf->{starting} ? str2time($conf->{starting}) : 0;
+    my $until    = defined $until_str ?        str2time($until_str)        : undef;
+    my $now      = exists  $conf->{now} ?      str2time($conf->{now})      : time;
 
     my $display = $now >= $starting ? 1 : 0;
     if (defined $until)
@@ -92,8 +97,7 @@ sub filter
         $display = 0 unless $until >= $now;
     }
 
-    $display = $display ^ $not;
-    $display ? $text : '';
+    $display ^ $not ? $text : '';
 }
 
 =head1 AUTHOR

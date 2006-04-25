@@ -10,6 +10,7 @@ my $builder = Module::Build->new(
     build_requires => {
         'Test::More' => 0,
         'Template::Plugin' => 0,
+        'List::MoreUtils' => 0.19,
     },
     add_to_cleanup      => [ 'Template-Plugin-ByDate-*' ],
 );

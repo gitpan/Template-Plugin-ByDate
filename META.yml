@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name: Template-Plugin-ByDate
-version: 0.01
+version: 0.02
 author:
   - Darin McBride <dmcbride@cpan.org>
 abstract: Keeps/removes included text based on whether the
