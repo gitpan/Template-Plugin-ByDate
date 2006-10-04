@@ -5,8 +5,7 @@ use strict;
 
 =head1 NAME
 
-Template::Plugin::ByDate - Keeps/removes included text based on whether the
-    current date is within range.
+Template::Plugin::ByDate - Keeps/removes included text based on whether the current date is within range.
 
 =head1 VERSION
 
@@ -14,7 +13,7 @@ Version 0.01
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
@@ -77,26 +76,41 @@ sub filter
 {
     my ($self, $text, $args, $conf) = @_;
 
+    # cargo-cult code: this is what Template::Plugin says to do.
     $args = $self->merge_args($args);
     $conf = $self->merge_config($conf);
 
+    # if "not" is specified B<anywhere>,
+    # then we will reverse the I<entire> expression
     my $not = (any { lc eq 'not' } @$args) ? 1 : 0;
+
+    # if until is provided, but there is no colon, treat this as the
+    # end of day rather than beginning of day.  This may reduce some
+    # ability to do what you want, but for the vast majority of the cases
+    # will make your templates easier to read, IMO.
     my $until_str = $conf->{'until'};
     if (defined $until_str and $until_str !~ /:/)
     {
         $until_str .= ' 23:59:59';
     }
 
+    # convert input to timestamps.
     my $starting = exists  $conf->{starting} ? str2time($conf->{starting}) : 0;
-    my $until    = defined $until_str ?        str2time($until_str)        : undef;
-    my $now      = exists  $conf->{now} ?      str2time($conf->{now})      : time;
+    my $until    = defined $until_str        ? str2time($until_str)        : undef;
 
+    # undocumented: don't use it.  This is here solely for testing purposes.
+    my $now      = exists  $conf->{now}      ? str2time($conf->{now})      : time;
+
+    # are we within the range?  There probably is a simpler way to express
+    # this, but this works.
     my $display = $now >= $starting ? 1 : 0;
     if (defined $until)
     {
         $display = 0 unless $until >= $now;
     }
 
+    # negate the display if the 'not' argument was given, and return either
+    # the text or nothing depending on that.
     $display ^ $not ? $text : '';
 }
 

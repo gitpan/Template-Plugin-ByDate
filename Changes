@@ -7,3 +7,7 @@ Revision history for Template-Plugin-ByDate
         * Clean up - use List::MoreUtils instead of home-grown any function
         + Made the until clause more explicit
         + Added some boundary tests
+
+0.03    2006-10-04
+        ! Fix YAML output by upgrading Module::Build on the build machine
+        + Added some samples
