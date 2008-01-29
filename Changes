@@ -11,3 +11,7 @@ Revision history for Template-Plugin-ByDate
 0.03    2006-10-04
         ! Fix YAML output by upgrading Module::Build on the build machine
         + Added some samples
+
+0.04	2008-01-29
+	! Add Date::Parse dependency (apparently not available on some
+          perl 5.10 test machines)

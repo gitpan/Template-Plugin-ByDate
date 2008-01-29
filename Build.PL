@@ -11,6 +11,7 @@ my $builder = Module::Build->new(
         'Test::More' => 0,
         'Template::Plugin' => 0,
         'List::MoreUtils' => 0.19,
+        'Date::Parse' => 2.27,
     },
     add_to_cleanup      => [ 'Template-Plugin-ByDate-*' ],
 );
